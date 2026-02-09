@@ -45,15 +45,58 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDto getTaskById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 
         return mapToResponse(task);
     }
 
     @Override
     public void deleteTask(Long id) {
+
+        if(!taskRepository.existsById(id)){
+            throw new RuntimeException("Task not found with id: " + id);
+        }
+
         taskRepository.deleteById(id);
     }
+
+    @Override
+    public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+
+        // SAFE UPDATE
+        if(dto.getTitle() != null){
+            task.setTitle(dto.getTitle());
+        }
+
+        if(dto.getDescription() != null){
+            task.setDescription(dto.getDescription());
+        }
+
+        if(dto.getDeadline() != null){
+            task.setDeadline(dto.getDeadline());
+        }
+
+        Task updated = taskRepository.save(task);
+
+        return mapToResponse(updated);
+    }
+
+    @Override
+    public TaskResponseDto updateStatus(Long id, TaskStatus status) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+
+        task.setStatus(status);
+
+        Task updated = taskRepository.save(task);
+
+        return mapToResponse(updated);
+    }
+
 
     private TaskResponseDto mapToResponse(Task task) {
         return TaskResponseDto.builder()
