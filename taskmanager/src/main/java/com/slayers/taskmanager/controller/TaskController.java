@@ -52,4 +52,19 @@ public class TaskController {
 
         return taskService.updateStatus(id, status);
     }
+    @PatchMapping("/{taskId}/assign/{userId}")
+    public TaskResponseDto assignTask(
+            @PathVariable Long taskId,
+            @PathVariable Long userId) {
+
+        return taskService.assignTask(taskId, userId);
+    }
+    @GetMapping("/user/{userId}")
+    public List<TaskResponseDto> getTasksByUser(
+            @PathVariable Long userId) {
+
+        return taskService.getTasksByUser(userId);
+    }
+
+
 }

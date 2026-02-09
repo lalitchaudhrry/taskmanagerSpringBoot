@@ -5,9 +5,12 @@ import com.slayers.taskmanager.dto.TaskResponseDto;
 import com.slayers.taskmanager.entity.Task;
 import com.slayers.taskmanager.entity.TaskStatus;
 import com.slayers.taskmanager.repository.TaskRepository;
+import com.slayers.taskmanager.repository.UserRepository;
 import com.slayers.taskmanager.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.slayers.taskmanager.entity.User;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+
 
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto) {
@@ -96,6 +101,32 @@ public class TaskServiceImpl implements TaskService {
 
         return mapToResponse(updated);
     }
+    @Override
+    public TaskResponseDto assignTask(Long taskId, Long userId) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        task.setAssignedUser(user);
+
+        return mapToResponse(taskRepository.save(task));
+    }
+
+    @Override
+    public List<TaskResponseDto> getTasksByUser(Long userId) {
+
+        if(!userRepository.existsById(userId)){
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+
+        return taskRepository.findByAssignedUserId(userId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
 
     private TaskResponseDto mapToResponse(Task task) {
@@ -105,6 +136,12 @@ public class TaskServiceImpl implements TaskService {
                 .description(task.getDescription())
                 .status(task.getStatus())
                 .deadline(task.getDeadline())
+                .assignedUserId(
+                        task.getAssignedUser() != null
+                                ? task.getAssignedUser().getId()
+                                : null
+                )
                 .build();
     }
+
 }

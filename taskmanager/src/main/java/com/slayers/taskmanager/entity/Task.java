@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import com.slayers.taskmanager.entity.User;
 
 @Entity
 @Getter
@@ -27,4 +28,9 @@ public class Task {
     private LocalDateTime deadline;
 
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User assignedUser;
+
 }

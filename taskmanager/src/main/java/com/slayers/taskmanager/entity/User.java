@@ -1,7 +1,10 @@
 package com.slayers.taskmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
+
 
 import java.time.LocalDateTime;
 
@@ -31,4 +34,8 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @JsonIgnore
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
+    private List<Task> tasks;
+
 }
