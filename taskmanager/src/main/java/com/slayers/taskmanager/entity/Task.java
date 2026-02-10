@@ -3,6 +3,7 @@ package com.slayers.taskmanager.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.slayers.taskmanager.entity.User;
 
@@ -25,9 +26,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

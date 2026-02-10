@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
@@ -21,9 +20,11 @@ public class TaskController {
         return taskService.createTask(dto);
     }
 
-    @GetMapping
-    public List<TaskResponseDto> getAllTasks() {
-        return taskService.getAllTasks();
+    @GetMapping("/user/{userId}")
+    public List<TaskResponseDto> getTasksByUser(
+            @PathVariable Long userId) {
+
+        return taskService.getTasksByUser(userId);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +45,6 @@ public class TaskController {
         return taskService.updateTask(id, dto);
     }
 
-
     @PatchMapping("/{id}/status")
     public TaskResponseDto updateStatus(
             @PathVariable Long id,
@@ -52,6 +52,7 @@ public class TaskController {
 
         return taskService.updateStatus(id, status);
     }
+
     @PatchMapping("/{taskId}/assign/{userId}")
     public TaskResponseDto assignTask(
             @PathVariable Long taskId,
@@ -59,12 +60,4 @@ public class TaskController {
 
         return taskService.assignTask(taskId, userId);
     }
-    @GetMapping("/user/{userId}")
-    public List<TaskResponseDto> getTasksByUser(
-            @PathVariable Long userId) {
-
-        return taskService.getTasksByUser(userId);
-    }
-
-
 }
