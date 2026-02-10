@@ -4,7 +4,8 @@ import com.slayers.taskmanager.entity.TaskStatus;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Data
 @Builder
@@ -14,7 +15,7 @@ public class TaskResponseDto {
     private String title;
     private String description;
     private TaskStatus status;
-    private LocalDateTime deadline;
+    private LocalDate deadline;
     private Long assignedUserId;
 
 }

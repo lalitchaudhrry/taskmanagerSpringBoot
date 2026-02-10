@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 import com.slayers.taskmanager.entity.User;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 import java.util.List;
 
 @Service
@@ -26,12 +27,16 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto) {
 
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Task task = Task.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .deadline(dto.getDeadline())
                 .status(TaskStatus.TODO)
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDate.now())
+                .assignedUser(user)   // ⭐ VERY IMPORTANT
                 .build();
 
         Task saved = taskRepository.save(task);
@@ -39,13 +44,8 @@ public class TaskServiceImpl implements TaskService {
         return mapToResponse(saved);
     }
 
-    @Override
-    public List<TaskResponseDto> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
+
+
 
     @Override
     public TaskResponseDto getTaskById(Long id) {
